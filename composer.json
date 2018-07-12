@@ -1,0 +1,17 @@
+{
+    "name": "kly/appointment",
+    "description": "Appointment maker integrated with Google Calendar API",
+    "type": "project",
+    "license": "BSD 3-Clause",
+    "authors": [
+        {
+            "name": "Kapan Lagi Youniverse"
+        }
+    ],
+    "require": {
+        "google/apiclient": "^2.2"
+    },
+    "autoload": {},
+    "autoload-dev": {},
+    "scripts": {}
+}
