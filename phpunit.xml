@@ -1,0 +1,10 @@
+<phpunit bootstrap="./test/bootstrap.php">
+  <testsuites>
+    <testsuite name="attendee">
+      <file>./test/Unit/AttendeeTest.php</file>
+    </testsuite>
+     <testsuite name="event_factory">
+      <file>./test/Unit/EventFactoryTest.php</file>
+    </testsuite>
+  </testsuites>
+</phpunit>
