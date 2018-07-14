@@ -2,34 +2,51 @@
 
 namespace Appointment;
 
+use Appointment\AttandeeConfiguration;
+
 /**
  * Google Api Client
  */
 class Attendee
 {
-    const CLIENT_SECRET    = 'client_secret.json';
-    const CREDENTIAL_FILE  = 'credentials.json';
-    const APPLICATION_NAME = 'Interview App';
-    const ACCESSS_TYPE     = 'offline';
-
     private $googleClient;
-    
+
     private $googleService;
+
+    private $config;
+    
     /**
-     * Constructor
-     * @param array $clientSecret
-     * @param array $oauth
+     * Consturctor
+     * @param AttandeeConfiguration $config
      */
-    public function __construct(
-        $clientSecret = array(),
-        $oauth = array()
-    ) {
+    public function __construct(AttandeeConfiguration $config)
+    {
+        $this->config = $config;
+
+        $this->initState();
+    }
+    /**
+     * Init Client and Service State
+     * @return void
+     */
+    private function initState()
+    {
         $this->googleClient = new \Google_Client();
-        $this->googleClient->setApplicationName(self::APPLICATION_NAME);
-        $this->googleClient->setScopes(\Google_Service_Calendar::CALENDAR);
-        $this->googleClient->setAuthConfig($clientSecret);
-        $this->googleClient->setAccessType(self::ACCESSS_TYPE);
-        $this->googleClient->setAccessToken($oauth);
+        $this->googleClient->setApplicationName(
+            $this->config->getApplicationName()
+        );
+        $this->googleClient->setScopes(
+            \Google_Service_Calendar::CALENDAR
+        );
+        $this->googleClient->setAuthConfig(
+            $this->config->getClientSecret()
+        );
+        $this->googleClient->setAccessType(
+            $this->config->getAccessType()
+        );
+        $this->googleClient->setAccessToken(
+            $this->config->getOauth()
+        );
         $this->refreshToken();
         $this->googleService = new \Google_Service_Calendar(
             $this->googleClient
@@ -37,28 +54,32 @@ class Attendee
     }
     /**
      * List events based on calendarID
-     * @return array
+     * @return bool|array
      */
     public function listEvents()
     {
-        $calendarId = 'primary';
-        
-        $optParams  = array(
+        $calendarId = $this->config->getCalendarId();
+
+        $optParams = array(
             'maxResults'   => 10,
             'orderBy'      => 'startTime',
             'singleEvents' => true,
             'timeMin'      => date('c'),
         );
 
-        $results = $this->googleService->events->listEvents($calendarId, $optParams);
-        
-        $events = array();
+        try {
+            $results = $this->googleService->events->listEvents($calendarId, $optParams);
 
-        foreach ($results->getItems() as $event) {
-            array_push($events, $event->getSummary());
+            $events = array();
+
+            foreach ($results->getItems() as $event) {
+                array_push($events, $event->getSummary());
+            }
+
+            return $events;
+        } catch (\Google_Service_Exception $e) {
+            return false;
         }
-
-        return $events;
     }
     /**
      * Get google client

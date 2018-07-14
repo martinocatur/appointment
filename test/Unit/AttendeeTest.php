@@ -3,18 +3,20 @@
 namespace Appointment\Test;
 
 use Appointment\Attendee;
+use Appointment\AttandeeConfiguration;
 
-class MakerTest extends \PHPUnit\Framework\TestCase
+class AttandeeTest extends \PHPUnit\Framework\TestCase
 {
     private $attendee;
 
+    private $config;
+
     public function setUp()
     {
-        $credential = \loadCredential();
+        $this->config = new AttandeeConfiguration();
 
         $this->attendee = new Attendee(
-            $credential['client_secret'],
-            $credential['oauth']
+            $this->config
         );
     }
 
@@ -27,6 +29,6 @@ class MakerTest extends \PHPUnit\Framework\TestCase
     {
         $events = $this->attendee->listEvents();
 
-        print_r($events);
+        $this->assertNotFalse($events);
     }
 }
