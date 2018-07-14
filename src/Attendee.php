@@ -10,57 +10,76 @@ class Attendee
     const CLIENT_SECRET    = 'client_secret.json';
     const CREDENTIAL_FILE  = 'credentials.json';
     const APPLICATION_NAME = 'Interview App';
-    const ACESSS_TYPE      = 'offline';
+    const ACCESSS_TYPE     = 'offline';
 
     private $googleClient;
-
-    private $email;
+    
+    private $googleService;
     /**
-     * Default constructor
-     * @param string $credentialFile
-     * @param string $applicationName
-     * @param string $scope
-     * @param string $accessType
-     * @param string $clientSecretFile
+     * Constructor
+     * @param array $clientSecret
+     * @param array $oauth
      */
     public function __construct(
-        $applicationName = self::APPLICATION_NAME,
-        $scope = \Google_Service_Calendar::CALENDAR,
-        $accessType = self::ACESSS_TYPE,
-        $clientSecretFile = ''
+        $clientSecret = array(),
+        $oauth = array()
     ) {
         $this->googleClient = new \Google_Client();
-        $this->googleClient->setApplicationName($applicationName);
-        $this->googleClient->setScopes($scope);
-        $this->googleClient->setAuthConfig(
-                $this->filterCredentialPath(
-                    $clientSecretFile
-                )
+        $this->googleClient->setApplicationName(self::APPLICATION_NAME);
+        $this->googleClient->setScopes(\Google_Service_Calendar::CALENDAR);
+        $this->googleClient->setAuthConfig($clientSecret);
+        $this->googleClient->setAccessType(self::ACCESSS_TYPE);
+        $this->googleClient->setAccessToken($oauth);
+        $this->refreshToken();
+        $this->googleService = new \Google_Service_Calendar(
+            $this->googleClient
         );
-        $this->googleClient->setAccessType($accessType);
     }
-
     /**
-     * Check if path exist
-     * @param  string $path
-     * @return string
-     */
-    public function filterCredentialPath($path)
-    {
-        if (!file_exists($path)) {
-            return realpath(__DIR__ . '/../' . self::CLIENT_SECRET);
-        }
-        return $path;
-    }
-
-    /**
-     * Create array with key =>'email'
+     * List events based on calendarID
      * @return array
      */
-    private function serializeEmail()
+    public function listEvents()
     {
-        return array(
-            'email'=>$this->email
+        $calendarId = 'primary';
+        
+        $optParams  = array(
+            'maxResults'   => 10,
+            'orderBy'      => 'startTime',
+            'singleEvents' => true,
+            'timeMin'      => date('c'),
         );
+
+        $results = $this->googleService->events->listEvents($calendarId, $optParams);
+        
+        $events = array();
+
+        foreach ($results->getItems() as $event) {
+            array_push($events, $event->getSummary());
+        }
+
+        return $events;
+    }
+    /**
+     * Get google client
+     * @return \Google_Client
+     */
+    public function getClient()
+    {
+        $client = clone $this->googleClient;
+
+        return $client;
+    }
+    /**
+     * Refresh token each time new object created
+     * @return void
+     */
+    private function refreshToken()
+    {
+        if ($this->googleClient->isAccessTokenExpired()) {
+            $this->googleClient->fetchAccessTokenWithRefreshToken(
+                $this->googleClient->getRefreshToken()
+            );
+        }
     }
 }

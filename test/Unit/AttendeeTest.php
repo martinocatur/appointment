@@ -10,11 +10,23 @@ class MakerTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->attendee = new Attendee();
+        $credential = \loadCredential();
+
+        $this->attendee = new Attendee(
+            $credential['client_secret'],
+            $credential['oauth']
+        );
     }
 
     public function testInstanceNotNull()
     {
         $this->assertNotNull($this->attendee);
+    }
+
+    public function testListEvents()
+    {
+        $events = $this->attendee->listEvents();
+
+        print_r($events);
     }
 }
