@@ -19,6 +19,8 @@ class AttandeeConfiguration
 
     private $oauth;
 
+    private $dateSlots;
+
     const CONFIGURATION_FILE = 'config.json';
 
     const CREDENTIAL_FILE = 'credential.json';
@@ -52,7 +54,7 @@ class AttandeeConfiguration
     }
     /**
      * Get access type
-     * @return [type] [description]
+     * @return string
      */
     public function getAccessType()
     {
@@ -75,6 +77,14 @@ class AttandeeConfiguration
         return $this->oauth;
     }
     /**
+     * Get date slots on config file
+     * @return array
+     */
+    public function getDateSlots()
+    {
+        return $this->dateSlots;
+    }
+    /**
      * Get application settings
      * @return array
      */
@@ -92,6 +102,8 @@ class AttandeeConfiguration
         $this->calendarId = $appSettings['calendar_id'];
 
         $this->accessType = $appSettings['access_type'];
+
+        $this->dateSlots = $appSettings['available_slots'];
     }
     /**
      * get credential

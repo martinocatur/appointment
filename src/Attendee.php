@@ -69,7 +69,7 @@ class Attendee
                     $this->filterCalendarId(
                         $this->config->getCalendarId()
                     ),
-                   $options
+                    $options
                 );
             default:
                 throw new \Exception("Type undefined", 1);
@@ -78,6 +78,8 @@ class Attendee
     }
     /**
      * List events based on calendarID
+     * @param  string $startTime string date('c') format
+     * @param  string $endTime string date('c') format
      * @return array
      * @throws \Google_Service_Exception
      */
@@ -87,11 +89,19 @@ class Attendee
             $calendarId,
             $options
         );
-        $events  = array();
+        $events = array();
         foreach ($results->getItems() as $event) {
             array_push($events, $event);
         }
         return $events;
+    }
+    /**
+     * Get configuration
+     * @return AttandeeConfiguration
+     */
+    public function getConfig()
+    {
+        return $this->config;
     }
     /**
      * Get google client

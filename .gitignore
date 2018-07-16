@@ -2,8 +2,6 @@ composer.phar
 /vendor/
 /test/client_secret.json
 /test/credential.json
-/credential/credentials.json
-/credential/client_secret.json
 credential.json
 *.lock
 *.cache

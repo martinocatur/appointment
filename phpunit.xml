@@ -6,5 +6,8 @@
      <testsuite name="event_factory">
       <file>./test/Unit/EventFactoryTest.php</file>
     </testsuite>
+    <testsuite name="function">
+      <file>./test/Unit/FunctionTest.php</file>
+    </testsuite>
   </testsuites>
 </phpunit>
