@@ -4,7 +4,6 @@ namespace Appointment\Test;
 
 use Appointment\AttandeeConfiguration;
 use Appointment\Attendee;
-use Appointment\AttandeeConfiguration;
 
 class AttandeeTest extends \PHPUnit\Framework\TestCase
 {

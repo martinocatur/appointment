@@ -21,6 +21,7 @@
         }
     },
     "scripts": {
+        "test": "php ./phpunit --bootstrap ./test/bootstrap.php ./test/",
         "test:attendee:verbose":"php ./phpunit  --configuration=phpunit.xml --testsuite attendee -vvv --debug",
         "test:function:verbose":"php ./phpunit  --configuration=phpunit.xml --testsuite function -vvv --debug",
         "test:event_factory:verbose":"php ./phpunit  --configuration=phpunit.xml --testsuite event_factory -vvv --debug",
