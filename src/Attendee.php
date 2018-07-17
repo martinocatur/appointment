@@ -2,7 +2,7 @@
 
 namespace Appointment;
 
-use Appointment\AttandeeConfiguration;
+use Appointment\AttendeeConfiguration;
 
 /**
  * Google Api Client
@@ -20,9 +20,9 @@ class Attendee
 
     /**
      * Consturctor
-     * @param AttandeeConfiguration $config
+     * @param AttendeeConfiguration $config
      */
-    public function __construct(AttandeeConfiguration $config)
+    public function __construct(AttendeeConfiguration $config)
     {
         $this->config = $config;
 
@@ -97,7 +97,7 @@ class Attendee
     }
     /**
      * Get configuration
-     * @return AttandeeConfiguration
+     * @return AttendeeConfiguration
      */
     public function getConfig()
     {

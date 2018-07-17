@@ -3,7 +3,7 @@
 namespace Appointment\Test;
 
 use Appointment\Attendee;
-use Appointment\AttandeeConfiguration;
+use Appointment\AttendeeConfiguration;
 use function Appointment\isSlotAvailable;
 
 class FunctionTest extends \PHPUnit\Framework\TestCase
@@ -15,7 +15,7 @@ class FunctionTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->attendeeConfiguration = new AttandeeConfiguration();
+        $this->attendeeConfiguration = new AttendeeConfiguration();
         $this->attendee = new Attendee($this->attendeeConfiguration);
         $this->startTime = '2018-07-12T10:00:00+07:00';
         $this->endTime = '2018-07-12T11:00:00+07:00';

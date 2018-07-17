@@ -7,7 +7,7 @@ use function Appointment\filterFilePath;
 /**
  *
  */
-class AttandeeConfiguration
+class AttendeeConfiguration
 {
     private $applicationName;
 
@@ -20,6 +20,8 @@ class AttandeeConfiguration
     private $oauth;
 
     private $dateSlots;
+
+    private $eventTypes;
 
     const CONFIGURATION_FILE = 'config.json';
 
@@ -85,7 +87,16 @@ class AttandeeConfiguration
         return $this->dateSlots;
     }
     /**
-     * Get application settings
+     * Get event types
+     * @return array
+     */
+    public function getEventTypes()
+    {
+        return $this->eventTypes;
+    }
+    /**
+     * Setup application settings
+     * Based on configuration
      * @return array
      */
     private function setupAppSettings()
@@ -104,9 +115,11 @@ class AttandeeConfiguration
         $this->accessType = $appSettings['access_type'];
 
         $this->dateSlots = $appSettings['available_slots'];
+
+        $this->eventTypes = $appSettings['event_types'];
     }
     /**
-     * get credential
+     * Setup credential
      * @return void
      */
     private function setupCredentials()
