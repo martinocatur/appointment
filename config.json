@@ -1,25 +1,25 @@
 {
-	"application_name":"Interview App",
-	"calendar_id":"primary",
-	"access_type":"offline",
-	"available_slots": [
-		{
-			"monday":"10:00 - 11:00"
-		},
-		{
-			"tuesday":"10:00 - 11:00"
-		},
-		{
-			"thursday":"10:00 - 11:00"
-		}
-	],
-	"event_types":[
-		{
-			"interview":"120"
+    "application_name":"Interview App",
+    "calendar_id":"primary",
+    "access_type":"offline",
+    "available_slots": [
+        {
+            "monday":"10:00 - 17:00"
+        },
+        {
+            "tuesday":"10:00 - 17:00"
+        },
+        {
+            "thursday":"10:00 - 17:00"
+        }
+    ],
+    "event_types":[
+        {
+            "interview":"120"
 
-		},
-		{
-			"meeting":"60"
-		}
-	]
+        },
+        {
+            "meeting":"60"
+        }
+    ]
 }

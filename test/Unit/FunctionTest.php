@@ -4,7 +4,8 @@ namespace Appointment\Test;
 
 use Appointment\Attendee;
 use Appointment\AttendeeConfiguration;
-use function Appointment\isSlotAvailable;
+use function Appointment\getAvailableSlots;
+use function Appointment\tmpEventsToArray;
 
 class FunctionTest extends \PHPUnit\Framework\TestCase
 {
@@ -17,8 +18,8 @@ class FunctionTest extends \PHPUnit\Framework\TestCase
     {
         $this->attendeeConfiguration = new AttendeeConfiguration();
         $this->attendee = new Attendee($this->attendeeConfiguration);
-        $this->startTime = '2018-07-12T10:00:00+07:00';
-        $this->endTime = '2018-07-12T11:00:00+07:00';
+        $this->startTime = '2018-07-09T14:30:00+07:00';
+        $this->endTime = '2018-07-09T15:30:00+07:00';
     }
 
     public function testCheckIfSlotIsAvailable()
@@ -32,12 +33,11 @@ class FunctionTest extends \PHPUnit\Framework\TestCase
             'maxResults'   => 10,
             'orderBy'      => 'startTime',
             'singleEvents' => true,
-            'timeMin'      => $startTime,
-            'timeMax'      => $endTime
+            'timeMin'      => '2018-07-09T10:00:00+07:00',
+            'timeMax'      => '2018-07-09T17:00:00+07:00'
         );
 
         $events = $this->attendee->listEvents($calendarId, $options);
-        
-        $this->assertTrue(isSlotAvailable($startTime, $endTime, $config, $events));
+        $this->assertTrue(!empty(getAvailableSlots($startTime, $endTime, $config, $events)));
     }
 }

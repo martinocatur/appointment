@@ -37,21 +37,95 @@ function filterFilePath($path)
  * @param  array $events
  * @return boolean
  */
-function isSlotAvailable($startTime, $endTime, $config = array(), $events)
+function getAvailableSlots($startTime, $endTime, $config = array(), $events)
 {
-    $date          = date_create($startTime);
-    $day           = strtolower((date_format($date, "l")));
-    $startHours    = substr($startTime, 11, 5);
-    $endHours      = substr($endTime, 11, 5);
+    $date = date_create($startTime);
+    $day = strtolower((date_format($date, "l")));
+    $startHour = getHourFromRFCDate($startTime);
+    $endHour = getHourFromRFCDate($endTime);
     $slotsOnConfig = array_column($config, $day);
+    $availableSlots = [];
+
+    //temporary hardcoded
+    $eventTypeDuration = 60;
 
     if (!empty($slotsOnConfig)) {
-        if (in_array($startHours . " - " . $endHours, $slotsOnConfig) && empty($events)) {
-            return true;
+        $startOnConfig = substr($slotsOnConfig[0], 0, 5);
+        $endOnConfig = substr($slotsOnConfig[0], 8, 5);
+
+        if ($startHour >= $startOnConfig && $endHour <= $endOnConfig) {
+            $bookedSlots = tmpEventsToArray($events);
+            $bookedSlotsLength = count($bookedSlots);
+            
+            if ($bookedSlotsLength == 0) {
+                array_push($availableSlots, $slotsOnConfig[0]);
+            }
+
+            for ($i = 0; $i < $bookedSlotsLength; $i++) {
+                if ($i == 0 && getInterval($startOnConfig, getHourFromRFCDate($bookedSlots[$i]['start'])) >= $eventTypeDuration) {
+                    array_push($availableSlots, [
+                        'start'=>$startOnConfig,
+                        'end'=>$bookedSlots[$i]['start']
+                    ]);
+                }
+
+                if ($i == ($bookedSlotsLength - 1) && getInterval(getHourFromRFCDate($bookedSlots[$i]['end']), $endOnConfig) >= $eventTypeDuration) {
+                    array_push($availableSlots, [
+                        'start'=>$bookedSlots[$i]['end'],
+                        'end'=>$endOnConfig
+                    ]);
+                }
+
+                if ($i < ($bookedSlotsLength - 1)) {
+                    if (getInterval(getHourFromRFCDate($bookedSlots[$i]['end']), getHourFromRFCDate($bookedSlots[$i + 1]['start'])) >= $eventTypeDuration) {
+                        array_push($availableSlots, [
+                            'start'=>$bookedSlots[$i]['end'],
+                            'end'=>$bookedSlots[$i + 1]['start']
+                        ]);
+                    }
+                }
+            }
         }
     }
+    return $availableSlots;
+}
+/**
+ * get interval between two times
+ * @param  string $startTime example. 10:00
+ * @param  string $endTime   example. 11:00
+ * @return int
+ */
+function getInterval($startTime, $endTime)
+{
+    $start = strtotime('1/1/1990 ' . $startTime);
+    $end = strtotime('1/1/1990 ' . $endTime);
 
-    return false;
+    return ($end - $start) / 60;
+}
+/**
+ * get hour from rfc date format
+ * @param  string $date ex. 2018-07-09T14:30:00+07:00
+ * @return string
+ */
+function getHourFromRFCDate($date)
+{
+    return substr($date, 11, 5);
+}
+/**
+ * mapping start & end dates from events object
+ * @param  array $events
+ * @return array
+ */
+function tmpEventsToArray($events)
+{
+    $result = array_map(function ($event) {
+        return [
+            'start'=>$event->getStart()->dateTime,
+            'end'=>$event->getEnd()->dateTime
+        ];
+    }, $events);
+
+    return $result;
 }
 /**
  * Filter an array based on allowed keys
