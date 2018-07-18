@@ -4,6 +4,7 @@ namespace Appointment\Test;
 
 use Appointment\AttendeeConfiguration;
 use Appointment\Attendee;
+use Appointment\SlotHandler;
 
 class AttendeeTest extends \PHPUnit\Framework\TestCase
 {
@@ -11,12 +12,23 @@ class AttendeeTest extends \PHPUnit\Framework\TestCase
 
     private $config;
 
+    private $events;
+
     public function setUp()
     {
         $this->config = new AttendeeConfiguration();
 
         $this->attendee = new Attendee(
             $this->config
+        );
+
+        $this->events = $this->attendee->makeRequest(
+            $this->attendee::FETCH_LIST_EVENTS,
+            $optParams = array(
+                'orderBy'      => 'startTime',
+                'singleEvents' => true,
+                'timeMin' => date('c')
+            )
         );
     }
 
@@ -27,14 +39,19 @@ class AttendeeTest extends \PHPUnit\Framework\TestCase
 
     public function testListEvents()
     {
-        $events = $this->attendee->makeRequest(
-            $this->attendee::FETCH_LIST_EVENTS,
-            $optParams = array(
-                'maxResults'   => 10,
-                'orderBy'      => 'startTime',
-                'singleEvents' => true
-            )
+        $this->assertNotNull($this->events);
+    }
+
+    public function testGetAvailableSlots()
+    {
+        $SlotHandler = new SlotHandler();
+
+        $schedules = $SlotHandler->getAvailableSlots(
+            20,
+            $this->config->getDateSlots()[0]['monday'],
+            $this->events
         );
-        $this->assertNotNull($events);
+
+        //print_r($schedules);
     }
 }

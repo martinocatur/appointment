@@ -15,6 +15,7 @@ class Attendee
 
     private $config;
 
+    private $events;
 
     const FETCH_LIST_EVENTS = 'list_events';
 
@@ -65,12 +66,13 @@ class Attendee
     {
         switch ($type) {
             case self::FETCH_LIST_EVENTS:
-                return $this->listEvents(
-                    $this->filterCalendarId(
-                        $this->config->getCalendarId()
-                    ),
-                    $options
-                );
+                return
+                    $this->listEvents(
+                        $this->filterCalendarId(
+                            $this->config->getCalendarId()
+                        ),
+                        $options
+                    );
             default:
                 throw new \Exception("Type undefined", 1);
 
@@ -80,7 +82,7 @@ class Attendee
      * List events based on calendarID
      * @param  string $startTime string date('c') format
      * @param  string $endTime string date('c') format
-     * @return array
+     * @return \Google_Service_Calendar_Event
      * @throws \Google_Service_Exception
      */
     public function listEvents($calendarId, $options = array())
@@ -89,11 +91,8 @@ class Attendee
             $calendarId,
             $options
         );
-        $events = array();
-        foreach ($results->getItems() as $event) {
-            array_push($events, $event);
-        }
-        return $events;
+
+        return $results->getItems();
     }
     /**
      * Get configuration
