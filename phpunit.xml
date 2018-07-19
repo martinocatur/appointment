@@ -9,5 +9,8 @@
     <testsuite name="function">
       <file>./test/Unit/FunctionTest.php</file>
     </testsuite>
+    <testsuite name="slot">
+      <file>./test/Unit/SlotHandlerTest.php</file>
+    </testsuite>
   </testsuites>
 </phpunit>
