@@ -49,19 +49,6 @@ function filterArrayKey($arr = array(), $allowedKey = array())
     return $arr;
 }
 /**
- * [stringToDate description]
- * @param  string $strDate
- * @return mixed
- */
-function stringToDate($strDate)
-{
-    $date = new \DateTime($strDate);
-    if (!$date) {
-        throw new Exception("Can't create date, invalid format.", 1);
-    }
-    return $date;
-}
-/**
  * get interval between two times
  * @param  string $startTime example. 10:00
  * @param  string $endTime   example. 11:00
@@ -69,8 +56,8 @@ function stringToDate($strDate)
  */
 function getIntervalBetweenTime($startTime, $endTime)
 {
-    $start = strtotime('1/1/1990 ' . $startTime);
-    $end = strtotime('1/1/1990 ' . $endTime);
+    $start = strtotime('1/1/1980 ' . $startTime);
+    $end = strtotime('1/1/1980 ' . $endTime);
 
     return ($end - $start) / 60;
 }
@@ -79,57 +66,45 @@ function getIntervalBetweenTime($startTime, $endTime)
  * @param  string $date format RFC
  * @return string lowercase
  */
-function getDayFromDate(\DateTime $date)
+function getDayFromDate($date)
 {
     $day = strtolower((date_format($date, "l")));
     return $day;
 }
 /**
  * getTimeFromDate
- * @param  \DateTime $date
+ * @param  bool|\DateTime $date
  * @return string
  */
-function getTimeFromDate(\DateTime $date)
+function getTimeFromDate($date)
 {
     $time = date_format($date, 'H:i');
     return $time;
 }
 /**
- * Get duration of time
- * @param  string $dateTime1
- * @param  string $dateTime2
- * @return int
+ * Filter date instance
+ * @param  \DateTime|bool $date
+ * @return \DateTime|bool
+ * @throws \Exception
  */
-function getDuration($dateTime1, $dateTime2)
+function filterDate($date)
 {
-    $dateTime1 = setDate($dateTime1)->format('Y-m-d\TH:i:sP');
-    $dateTime2 = setDate($dateTime2)->format('Y-m-d\TH:i:sP');
-    $duration = (strtotime($dateTime1) - strtotime($dateTime2)) / 60;
-
-    return $duration;
+    if (!$date) {
+        throw new \Exception("Invalid date", 1);
+    }
+    return $date;
 }
 /**
- * Create Date
- * @param  string $h
- * @param  string $m
- * @return string
+ * Filter key existence on array
+ * @param  array $arr
+ * @param  mixed $key
+ * @return mixed
+ * @throws \Exception
  */
-function createDateRFC($h, $m)
+function filterKeyOnArr($arr, $key)
 {
-    $today = date("Y-m-d");
-    $date = new \DateTime($today);
-    $date->setTime((int) $h, (int) $m);
-    return $date->format('Y-m-d\TH:i:sP');
-}
-/**
- * Set Date
- * @param \DateTime
- */
-function setDate($date)
-{
-    $newDate = new \DateTime($date);
-
-    $newDate->setDate(1980, 1, 1);
-
-    return $newDate;
+    if (!isset($arr[$key])) {
+        throw new \Exception("Key undefined", 1);
+    }
+    return $arr[$key];
 }

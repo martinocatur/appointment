@@ -41,7 +41,12 @@ class SlotHandlerTest extends \PHPUnit\Framework\TestCase
         $events = $this->attendee->listEvents($calendarId, $options);
         $bookedSlots = $this->slotHandler->getBookedSlotsFromEvents($events);
 
-        $availableSlots = $this->slotHandler->getAvailableSlots($slotsOnConfig[0], $events, $this->start, $this->end);
+        $availableSlots = $this->slotHandler->getAvailableSlots(
+            $slotsOnConfig,
+            $events,
+            $this->start,
+            $this->end
+        );
         $this->assertTrue(!empty($availableSlots));
     }
 }
