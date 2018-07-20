@@ -49,6 +49,18 @@ function filterArrayKey($arr = array(), $allowedKey = array())
     return $arr;
 }
 /**
+ * Create RFC33899 format date
+ * @param  string|\DateTime $date
+ * @return string
+ */
+function createDateRFC($date)
+{
+    if (is_string($date)) {
+        $date = new \DateTime($date);
+    }
+    return $date->format('Y-m-d\TH:i:sP');
+}
+/**
  * get interval between two times
  * @param  string $startTime example. 10:00
  * @param  string $endTime   example. 11:00
@@ -62,13 +74,14 @@ function getIntervalBetweenTime($startTime, $endTime)
     return ($end - $start) / 60;
 }
 /**
- * getDayFromRfcDate
- * @param  string $date format RFC
+ * Get day from date
+ * @param  string $date format
  * @return string lowercase
  */
 function getDayFromDate($date)
 {
-    $day = strtolower((date_format($date, "l")));
+    $date = strtotime($date);
+    $day = strtolower(date('l', $date));
     return $day;
 }
 /**

@@ -2,6 +2,7 @@
 
 namespace Appointment;
 
+use function Appointment\createDateRFC;
 use function Appointment\filterDate;
 use function Appointment\filterKeyOnArr;
 use function Appointment\getDayFromDate;
@@ -15,93 +16,68 @@ class SlotHandler
 {
     const DEFAULT_DURATION = 60;
     /**
-     * getAvailableSlots
-     * @param  array    $slotsOnConfig
-     * @param  array     $events
-     * @param  \DateTime $start
-     * @param  \DateTime $end
-     * @param  integer   $duration
-     * @return array
-     */
-    public function getAvailableSlots(
-        $slotsOnConfig = array(),
-        $events = array(),
-        $start,
-        $end,
-        $duration = self::DEFAULT_DURATION
-    ) {
-        $availableSlots = [];
-
-        $timeSlotOnConfig = $this->getTimeSlot(
-            filterKeyOnArr($slotsOnConfig, 0)
-        );
-        $startTimeOnConfig = $timeSlotOnConfig['start'];
-        $endTimeOnConfig   = $timeSlotOnConfig['end'];
-        $startTime         = getTimeFromDate($start);
-        $endTime           = getTimeFromDate($end);
-        if (!empty($timeSlotOnConfig)) {
-            if (strtotime($startTime) >= strtotime($startTimeOnConfig) && strtotime($endTime) <= strtotime($endTimeOnConfig)) {
-                $bookedSlots = $this->getBookedSlotsFromEvents($events);
-                if (count($bookedSlots) == 0) {
-                    array_push($availableSlots, $timeSlotOnConfig);
-                } else {
-                    $availableSlots = $this->getAvailableSlotsBetweenBookedSlots($bookedSlots, $startTimeOnConfig, $endTimeOnConfig, $duration);
-                }
-            }
-        }
-
-        return $availableSlots;
-    }
-    /**
      * Get available slots
-     * Based on choosen date,
-     * available_slots defined in config.json
-     * and list event on google calendar
-     * @param  array $bookedSlots
+     * @param  string $dateSelected
+     * @param  \Appointment\Attendee $attendee
      * @param  int $duration
      * @return array
      */
-    public function getAvailableSlotsBetweenBookedSlots(
-        $bookedSlots,
-        $startTimeOnConfig,
-        $endTimeOnConfig,
-        $duration
+    public function getAvailableSlots(
+        $dateSelected,
+        $attendee,
+        $duration = self::DEFAULT_DURATION
     ) {
-        $result = [];
+        $slotOnConfig = $attendee->getConfig()->getDateSlots();
 
-        $bookedSlotsLength = count($bookedSlots);
-        for ($i = 0; $i < $bookedSlotsLength; $i++) {
-            $startTimeBooked = $bookedSlots[$i]['start'];
-            $endTimeBooked   = $bookedSlots[$i]['end'];
-            if ($i == 0 && $this->filterDuration(getIntervalBetweenTime($startTimeOnConfig, $startTimeBooked), $duration)) {
-                array_push($result, [
-                    'start' => $startTimeOnConfig,
-                    'end'   => $startTimeBooked,
-                ]);
-            }
-            if ($i == ($bookedSlotsLength - 1) && $this->filterDuration(getIntervalBetweenTime($endTimeBooked, $endTimeOnConfig), $duration)) {
-                array_push($result, [
-                    'start' => $endTimeBooked,
-                    'end'   => $endTimeOnConfig,
-                ]);
-            }
-            if ($i < ($bookedSlotsLength - 1)) {
-                $startTimeBooked = $bookedSlots[$i + 1]['start'];
-                if ($this->filterDuration(getIntervalBetweenTime($endTimeBooked, $startTimeBooked), $duration)) {
-                    array_push($result, [
-                        'start' => $endTimeBooked,
-                        'end'   => $startTimeBooked,
-                    ]);
-                }
-            }
+        if (empty($slotOnConfig)) {
+            return [];
         }
-
-        return $result;
+        $timelines        = [];
+        $eventsConstraint = array_map(
+            function ($time) use ($dateSelected, &$timelines) {
+                $timelines[] = array(
+                    'start' => $time,
+                    'end'   => $time,
+                );
+                return createDateRFC($dateSelected . " " . $time);
+            },
+            $this->getTimeSlot(
+                $this->getSlotAvailableOnConfig(
+                    $dateSelected,
+                    $slotOnConfig
+                )
+            )
+        );
+        $eventsOnCalendar = $this->getBookedSlotsFromEvents(
+            $attendee->makeRequest(
+                $attendee::FETCH_LIST_EVENTS,
+                $optParams = array(
+                    'orderBy'      => 'startTime',
+                    'singleEvents' => true,
+                    'timeMin'      => filterKeyOnArr($eventsConstraint, 'start'),
+                    'timeMax'      => filterKeyOnArr($eventsConstraint, 'end'),
+                )
+            )
+        );
+        array_unshift($eventsOnCalendar, array_shift($timelines));
+        array_push($eventsOnCalendar, array_shift($timelines));
+        $numOfEvents = count($eventsOnCalendar);
+        $slotsAvailable = [];
+        for ($i = 1; $i < $numOfEvents; $i++) {
+            $slotsAvailable[] = $this->createAvailSlot(
+                $eventsOnCalendar[$i - 1]['end'],
+                $eventsOnCalendar[$i]['start'],
+                $dateSelected,
+                $duration
+            );
+        }
+        return $slotsAvailable;
     }
+
     /**
      * mapping start & end dates
      * from events object
-     * @param  array $events
+     * @param mixed
      * @return array
      */
     public function getBookedSlotsFromEvents($events)
@@ -126,18 +102,35 @@ class SlotHandler
         return $result;
     }
     /**
+     * Create slot availaible
+     * @param  string $before
+     * @param  string $after
+     * @param  string $dateSelected
+     * @param  int $duration
+     * @return array
+     */
+    private function createAvailSlot($before, $after, $dateSelected, $duration)
+    {
+        $interval = getIntervalBetweenTime($before, $after);
+        if ($interval >= $duration) {
+            return array(
+                'start' => createDateRFC($dateSelected . ' ' . $before),
+                'end'   => createDateRFC($dateSelected . ' ' . $after),
+            );
+        }
+        return [];
+    }
+    /**
      * getSlotAvailableOnConfig
      * @param  string $date
      * @param  array  $config
-     * @return array
+     * @return string
      */
-    public function getSlotAvailableOnConfig($date, $config)
+    private function getSlotAvailableOnConfig($date, $config)
     {
         $day    = getDayFromDate($date);
-        $slots  = $config;
-        $result = array_column($slots, $day);
-
-        return $result;
+        $result = array_column($config, $day);
+        return array_shift($result);
     }
     /**
      * getTimeSlot
@@ -151,48 +144,5 @@ class SlotHandler
             return trim($time);
         }, $times);
         return array_combine(["start", "end"], $result);
-    }
-    /**
-     * Filter duration
-     * @param  int $durationAvailable
-     * @param  int $minimum
-     * @return bool
-     */
-    private function filterDuration($durationAvailable, $minimum)
-    {
-        if ($durationAvailable >= $minimum) {
-            return true;
-        }
-        return false;
-    }
-    /**
-     * Filter slots
-     * @param  array $slots
-     * @return array
-     */
-    private function filterSlots($slots)
-    {
-        $filtered = array();
-        foreach ($slots as $slot) {
-            if ($slot->duration > -1) {
-                array_push($filtered, $slot);
-            }
-        }
-        return $filtered;
-    }
-    /**
-     * Create slot object
-     * @param  int $duration
-     * @param  string $t1
-     * @param  string $t2
-     * @return \StdClass
-     */
-    private function createSlotObject($duration, $t1, $t2)
-    {
-        $object           = new \StdClass;
-        $object->t1       = $t1;
-        $object->t2       = $t2;
-        $object->duration = $duration;
-        return $object;
     }
 }
