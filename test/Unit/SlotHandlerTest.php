@@ -3,7 +3,6 @@
 namespace Appointment\Test;
 
 use Appointment\Attendee;
-use Appointment\AttendeeConfiguration;
 use Appointment\SlotHandler;
 
 class SlotHandlerTest extends \PHPUnit\Framework\TestCase
@@ -11,20 +10,22 @@ class SlotHandlerTest extends \PHPUnit\Framework\TestCase
     private $attendeeConfiguration;
     private $attendee;
     private $SlotHandler;
-
+    private $container;
     public function setUp()
     {
-        $this->attendeeConfiguration = new AttendeeConfiguration();
-        $this->attendee              = new Attendee($this->attendeeConfiguration);
-        $this->slotHandler           = new SlotHandler();
+        $this->container   = require __DIR__ . '/../container.php';
+        $this->slotHandler = new SlotHandler();
     }
 
     public function testGetAvailableSlots()
     {
         $dateSelected = date('2018-07-20');
-        
+
         print_r(
-            $this->slotHandler->getAvailableSlots($dateSelected, $this->attendee)
+            $this->slotHandler->getAvailableSlots(
+                $dateSelected,
+                $this->container->get(Attendee::class)
+            )
         );
     }
 }

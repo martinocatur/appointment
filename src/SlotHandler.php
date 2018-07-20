@@ -8,6 +8,7 @@ use function Appointment\filterKeyOnArr;
 use function Appointment\getDayFromDate;
 use function Appointment\getIntervalBetweenTime;
 use function Appointment\getTimeFromDate;
+use Appointment\Attendee;
 
 /**
  *
@@ -24,7 +25,7 @@ class SlotHandler
      */
     public function getAvailableSlots(
         $dateSelected,
-        $attendee,
+        Attendee $attendee,
         $duration = self::DEFAULT_DURATION
     ) {
         $slotOnConfig = $attendee->getConfig()->getDateSlots();

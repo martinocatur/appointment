@@ -14,13 +14,13 @@ class AttendeeTest extends \PHPUnit\Framework\TestCase
 
     private $events;
 
+    private $container;
+
     public function setUp()
     {
-        $this->config = new AttendeeConfiguration();
+        $this->container = require __DIR__ . '/../container.php';
 
-        $this->attendee = new Attendee(
-            $this->config
-        );
+        $this->attendee = $this->container->get(Attendee::class);
 
         $this->events = $this->attendee->makeRequest(
             $this->attendee::FETCH_LIST_EVENTS,
@@ -40,18 +40,5 @@ class AttendeeTest extends \PHPUnit\Framework\TestCase
     public function testListEvents()
     {
         $this->assertNotNull($this->events);
-    }
-
-    public function testGetAvailableSlots()
-    {
-        $SlotHandler = new SlotHandler();
-
-        $schedules = $SlotHandler->getAvailableSlots(
-            20,
-            $this->config->getDateSlots()[0]['monday'],
-            $this->events
-        );
-
-        //print_r($schedules);
     }
 }
