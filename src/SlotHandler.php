@@ -71,7 +71,7 @@ class SlotHandler
                 $duration
             );
         }
-        return $slotsAvailable;
+        return array_filter($slotsAvailable);
     }
 
     /**

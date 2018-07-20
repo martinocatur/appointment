@@ -68,8 +68,8 @@ function createDateRFC($date)
  */
 function getIntervalBetweenTime($startTime, $endTime)
 {
-    $start = strtotime('1/1/1980 ' . $startTime);
-    $end = strtotime('1/1/1980 ' . $endTime);
+    $start = strtotime('1/1/1970 ' . $startTime);
+    $end = strtotime('1/1/1970 ' . $endTime);
 
     return ($end - $start) / 60;
 }
