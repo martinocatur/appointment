@@ -5,13 +5,17 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Kapan Lagi Youniverse"
+            "name": "KapanLagi Youniverse"
         },
         {
-            "name": "Kenny Karnama"
+            "name": "Kenny Karnama",
+            "email": "kenny.karnama@kly.id",
+            "role": "Developer"
         },
         {
-            "name": "Martino Catur"
+            "name": "Martino Catur",
+            "email": "martino.yoganta@kly.id",
+            "role": "Developer"
         }
     ],
     "require": {
@@ -34,5 +38,8 @@
         "test:event_factory:verbose":"php ./phpunit  --configuration=phpunit.xml --testsuite event_factory -vvv --debug",
         "cs-fix": "php ./php-cs-fixer fix ./src -vvv --rules=@PSR2",
         "cs-fix:test": "php ./php-cs-fixer fix ./test -vvv --rules=@PSR2"
+    },
+    "require-dev": {
+        "php-di/php-di": "^6.0"
     }
 }

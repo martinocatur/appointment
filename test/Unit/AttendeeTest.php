@@ -15,13 +15,13 @@ class AttendeeTest extends \PHPUnit\Framework\TestCase
 
     private $events;
 
+    private $container;
+
     public function setUp()
     {
-        $this->config = new AttendeeConfiguration();
+        $this->container = require __DIR__ . '/../container.php';
 
-        $this->attendee = new Attendee(
-            $this->config
-        );
+        $this->attendee = $this->container->get(Attendee::class);
 
         $this->events = $this->attendee->makeRequest(
             $this->attendee::FETCH_LIST_EVENTS,
@@ -42,7 +42,7 @@ class AttendeeTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertNotNull($this->events);
     }
-
+  
     public function testInsertEvent()
     {
         $description = "Hai,\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";

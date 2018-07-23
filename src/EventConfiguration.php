@@ -11,7 +11,7 @@ class EventConfiguration
             'email'=>'martinocatur@gmail.com'
         ],
         [
-            'email'=>'irma.santoso@kly.idz'
+            'email'=>'irma.santoso@kly.id'
         ]
     ];
 
