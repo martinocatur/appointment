@@ -15,6 +15,11 @@ use function Appointment\getTimeFromDate;
 class SlotHandler
 {
     const DEFAULT_DURATION = 60;
+
+    public function __construct()
+    {
+        date_default_timezone_set('Asia/Jakarta');
+    }
     /**
      * Get available slots
      * @param  string $dateSelected

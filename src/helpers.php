@@ -121,3 +121,14 @@ function filterKeyOnArr($arr, $key)
     }
     return $arr[$key];
 }
+/**
+ * Return string date in Y-m-d
+ * @param  string $strDate
+ * @return string
+ */
+function getStandardDate($strDate)
+{
+    $date = date_create($strDate);
+    $result = date_format($date, 'Y-m-d');
+    return $result;
+}

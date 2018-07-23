@@ -3,6 +3,9 @@
 namespace Appointment;
 
 use Appointment\AttendeeConfiguration;
+use Google_Service_Calendar_Event;
+use Appointment\SlotHandler;
+use function Appointment\getStandardDate;
 
 /**
  * Google Api Client
@@ -13,11 +16,15 @@ class Attendee
 
     private $googleService;
 
+    private $slotHandler;
+
     private $config;
 
     private $events;
 
     const FETCH_LIST_EVENTS = 'list_events';
+
+    const SUBMIT_EVENT = 'submit_event';
 
     /**
      * Consturctor
@@ -55,6 +62,8 @@ class Attendee
         $this->googleService = new \Google_Service_Calendar(
             $this->googleClient
         );
+
+        $this->slotHandler = new SlotHandler();
     }
     /**
      * Make request to google api
@@ -73,6 +82,15 @@ class Attendee
                         ),
                         $options
                     );
+            case self:SUBMIT_EVENT:
+                return
+                    $this->submitEvent(
+                        $this->filterCalendarId(
+                            $this->config->getCalendarId()
+                        ),
+                        $options
+                    );
+                break;
             default:
                 throw new \Exception("Type undefined", 1);
 
@@ -113,6 +131,26 @@ class Attendee
         return $client;
     }
     /**
+     * Insert Event on google calendar
+     * @param  string $calendarId
+     * @param  Google_Service_Calendar_Event $event
+     * @return mixed
+     */
+    public function submitEvent($calendarId, Google_Service_Calendar_Event $event)
+    {
+        if ($this->isSlotAvailable($calendarId, $event->getStart()->getDateTime(), $event->getEnd()->getDateTime())) {
+            $this->googleService->events->insert($calendarId, $event);
+            return [
+                'created' => true
+            ];
+        }
+
+        return [
+            'created' => false,
+            'available_slot' =>$this->slotHandler->getAvailableSlots(getStandardDate($event->getStart()->getDateTime()), $this)
+        ];
+    }
+    /**
      * Refresh token each time new object created
      * @return void
      */
@@ -136,5 +174,28 @@ class Attendee
             throw new \Exception("Calendar Id required", 1);
         }
         return $calendarId;
+    }
+    /**
+     * Return true if slot is available
+     * @param  string  $calendarId
+     * @param  string  $start
+     * @param  string  $end
+     * @return boolean
+     */
+    private function isSlotAvailable($calendarId, $start, $end)
+    {
+        $options = [
+            'orderBy'      => 'startTime',
+            'singleEvents' => true,
+            'timeMin' => $start,
+            'timeMax' => $end
+        ];
+
+        $events = $this->listEvents($calendarId, $options);
+
+        if (empty($events)) {
+            return true;
+        }
+        return false;
     }
 }
