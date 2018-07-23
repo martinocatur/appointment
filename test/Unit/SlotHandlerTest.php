@@ -17,15 +17,12 @@ class SlotHandlerTest extends \PHPUnit\Framework\TestCase
         $this->slotHandler = new SlotHandler();
     }
 
-    public function testGetAvailableSlots()
+    public function testGetAvailableSlotsWithValidDate()
     {
         $dateSelected = date('2018-07-27');
 
-        print_r(
-            $this->slotHandler->getAvailableSlots(
-                $dateSelected,
-                $this->container->get(Attendee::class)
-            )
-        );
+        $availableSlot = $this->slotHandler->getAvailableSlots($dateSelected, $this->container->get(Attendee::class));
+
+        $this->assertTrue(!empty($availableSlot));
     }
 }
