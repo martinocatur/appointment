@@ -68,7 +68,7 @@ class Attendee
     /**
      * Make request to google api
      * @param  string $type
-     * @param  array $options
+     * @param  \Google_Service_Calendar_Event $options
      * @return mixed
      */
     public function makeRequest($type = '', $options = array())
@@ -82,7 +82,7 @@ class Attendee
                         ),
                         $options
                     );
-            case self:SUBMIT_EVENT:
+            case self::SUBMIT_EVENT:
                 return
                     $this->submitEvent(
                         $this->filterCalendarId(
@@ -90,7 +90,6 @@ class Attendee
                         ),
                         $options
                     );
-                break;
             default:
                 throw new \Exception("Type undefined", 1);
 

@@ -72,20 +72,20 @@ class EventConfiguration
     public function getFullConfiguration()
     {
         return  array(
-                  'summary' => $this->summary,
-                  'location' => $this->location,
-                  'description' => $this->description,
-                  'start' => $this->start,
-                  'end' => $this->end,
-                  'attendees' => $this->attendees,
-                  'recurrence' => '1',
-                  'reminders' => array(
-                    'useDefault' => false,
-                    'overrides' => array(
-                      array('method' => 'email', 'minutes' => 24 * 60),
-                      array('method' => 'popup', 'minutes' => 30),
-                    ),
-                  )
+                    'summary' => $this->summary,
+                    'location' => $this->location,
+                    'description' => $this->description,
+                    'start' => $this->start,
+                    'end' => $this->end,
+                    'attendees' => $this->attendees,
+                    'recurrence' => '1',
+                    'reminders' => array(
+                      'useDefault' => false,
+                      'overrides' => array(
+                        array('method' => 'email', 'minutes' => 24 * 60),
+                        array('method' => 'popup', 'minutes' => 30),
+                      ),
+                    )
                 );
     }
 
