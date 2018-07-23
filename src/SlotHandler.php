@@ -9,6 +9,7 @@ use function Appointment\getDayFromDate;
 use function Appointment\getIntervalBetweenTime;
 use function Appointment\getTimeFromDate;
 use Appointment\Attendee;
+use Appointment\EventConfiguration;
 
 /**
  *
@@ -19,7 +20,7 @@ class SlotHandler
 
     public function __construct()
     {
-        date_default_timezone_set('Asia/Jakarta');
+        date_default_timezone_set(EventConfiguration::EVENT_DEFAULT_TIMEZONE);
     }
     /**
      * Get available slots
