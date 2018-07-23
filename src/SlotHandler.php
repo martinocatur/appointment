@@ -9,6 +9,7 @@ use function Appointment\getDayFromDate;
 use function Appointment\getIntervalBetweenTime;
 use function Appointment\getTimeFromDate;
 use Appointment\Attendee;
+use Appointment\EventConfiguration;
 
 /**
  *
@@ -16,6 +17,11 @@ use Appointment\Attendee;
 class SlotHandler
 {
     const DEFAULT_DURATION = 60;
+
+    public function __construct()
+    {
+        date_default_timezone_set(EventConfiguration::EVENT_DEFAULT_TIMEZONE);
+    }
     /**
      * Get available slots
      * @param  string $dateSelected

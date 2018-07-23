@@ -1,11 +1,21 @@
 {
     "name": "kly/appointment",
     "description": "Appointment maker integrated with Google Calendar API",
-    "type": "project",
-    "license": "BSD 3-Clause",
+    "type": "library",
+    "license": "MIT",
     "authors": [
         {
-            "name": "Kapan Lagi Youniverse"
+            "name": "KapanLagi Youniverse"
+        },
+        {
+            "name": "Kenny Karnama",
+            "email": "kenny.karnama@kly.id",
+            "role": "Developer"
+        },
+        {
+            "name": "Martino Catur",
+            "email": "martino.yoganta@kly.id",
+            "role": "Developer"
         }
     ],
     "require": {
