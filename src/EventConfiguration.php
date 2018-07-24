@@ -4,33 +4,60 @@ namespace Appointment;
 
 class EventConfiguration
 {
+    /**
+     * Location of the event
+     */
     const EVENT_LOCATION = 'Pondok Blimbing Indah, Blok C6 No. 17, Jl. Raya Blimbing Indah, Polowijen, Malang, Kota Malang, Jawa Timur 65126, Indonesia';
-
+    /**
+     * Default attendee
+     */
     const EVENT_DEFAULT_ATTENDEES = [
         [
-            'email'=>'martinocatur@gmail.com'
+            'email'=>'ppl@kly.id'
         ],
         [
-            'email'=>'irma.santoso@kly.id'
+            'email'=>'ppl1@kly.id'
         ]
     ];
-
+    /**
+     * Default Timezone
+     */
     const EVENT_DEFAULT_TIMEZONE = 'Asia/Jakarta';
-
+    /**
+     * Attendees
+     * @var array
+     */
     protected $attendees;
-
+    /**
+     * Location
+     * @var string
+     */
     protected $location;
-
+    /**
+     * Summary of the event
+     * @var string
+     */
     protected $summary;
-
+    /**
+     * Description
+     * @var string
+     */
     protected $description;
-
+    /**
+     * Event's Start Time (RFC Format)
+     * @var string
+     */
     protected $start;
-
+    /**
+     * Event's End Time (RFC Format)
+     * @var string
+     */
     protected $end;
-
+    /**
+     * Entry Points
+     * @var Array
+     */
     protected $entryPoints;
-
     /**
      * Default constructor
      * @param string $start       RFC date format
@@ -98,7 +125,6 @@ class EventConfiguration
             )
         );
     }
-
     /**
      * Attach attendee to Event
      * @param  string $email
@@ -108,7 +134,6 @@ class EventConfiguration
     {
         array_push($this->attendees, ['email' => $email]);
     }
-
     /**
      * Get default attendees
      * @return array
