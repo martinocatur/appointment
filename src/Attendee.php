@@ -137,7 +137,11 @@ class Attendee
      */
     public function submitEvent($calendarId, Google_Service_Calendar_Event $event)
     {
-        if ($this->isSlotAvailable($calendarId, $event->getStart()->getDateTime(), $event->getEnd()->getDateTime())) {
+        if ($this->isSlotAvailable(
+            $calendarId,
+            $event->getStart()->getDateTime(),
+            $event->getEnd()->getDateTime()
+        )) {
             $this->googleService->events->insert($calendarId, $event);
             return [
                 'created' => true
@@ -192,9 +196,6 @@ class Attendee
 
         $events = $this->listEvents($calendarId, $options);
 
-        if (empty($events)) {
-            return true;
-        }
-        return false;
+        return empty($events);
     }
 }

@@ -32,7 +32,7 @@ class EventConfiguration
     protected $entryPoints;
 
     /**
-     * [__construct description]
+     * Default constructor
      * @param string $start       RFC date format
      * @param string $end         RFC date format
      * @param string $attendee    email
@@ -68,7 +68,10 @@ class EventConfiguration
             'timeZone' => self::EVENT_DEFAULT_TIMEZONE
         ];
     }
-
+    /**
+     * Get event configuration
+     * @return array
+     */
     public function getFullConfiguration()
     {
         return  array(
@@ -88,12 +91,19 @@ class EventConfiguration
                     )
                 );
     }
-
+    /**
+     * Attach attendee to Event
+     * @param  string $email
+     * @return void
+     */
     private function attachAttendee($email)
     {
         array_push($this->attendees, ['email' => $email]);
     }
-    
+    /**
+     * Get default attendees
+     * @return array
+     */
     private function getDefaultAttendees()
     {
         return self::EVENT_DEFAULT_ATTENDEES;

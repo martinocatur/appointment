@@ -69,7 +69,7 @@ function createDateRFC($date)
 function getIntervalBetweenTime($startTime, $endTime)
 {
     $start = strtotime('1/1/1970 ' . $startTime);
-    $end = strtotime('1/1/1970 ' . $endTime);
+    $end   = strtotime('1/1/1970 ' . $endTime);
 
     return ($end - $start) / 60;
 }
@@ -81,7 +81,7 @@ function getIntervalBetweenTime($startTime, $endTime)
 function getDayFromDate($date)
 {
     $date = strtotime($date);
-    $day = strtolower(date('l', $date));
+    $day  = strtolower(date('l', $date));
     return $day;
 }
 /**
@@ -126,9 +126,9 @@ function filterKeyOnArr($arr, $key)
  * @param  string $strDate
  * @return string
  */
-function getStandardDate($strDate)
+function getStandardDate($strDate, $format = 'Y-m-d')
 {
-    $date = date_create($strDate);
-    $result = date_format($date, 'Y-m-d');
+    $date   = date_create($strDate);
+    $result = date_format($date, $format);
     return $result;
 }
