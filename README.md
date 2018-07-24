@@ -2,6 +2,10 @@
 
 Appointment maker with google calendar api integration.
 
+## Instalation
+
+Download and install this package using composer `composer require kly/appointment`. Load up the autoloader and call the classes you need.
+
 ## Steps to contribute
 
 1. Fork the original repository.
@@ -38,3 +42,16 @@ Appointment maker with google calendar api integration.
 PHP CS Fixer is intended to fix coding standard. So, Remember! to always run PHP CS Fixer before you create pull request.
 
     `composer run cs-fix`
+
+## Testing
+Open a command prompt or terminal, navigate to project directory and run command `php ./phpunit --bootstrap ./test/bootstrap.php ./test/`
+~~~
+> php ./phpunit --bootstrap ./test/bootstrap.php ./test/
+PHPUnit 4.8.36 by Sebastian Bergmann and contributors.
+
+..................
+
+Time: 14 seconds, Memory: 10.00MB
+
+OK (18 tests, 98 assertions)
+~~~
