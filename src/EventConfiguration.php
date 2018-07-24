@@ -69,7 +69,7 @@ class EventConfiguration
         ];
     }
 
-  /**
+    /**
      * Get event configuration
      * @return array
      */
