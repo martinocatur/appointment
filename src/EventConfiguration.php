@@ -32,7 +32,7 @@ class EventConfiguration
     protected $entryPoints;
 
     /**
-     * [__construct description]
+     * Default constructor
      * @param string $start       RFC date format
      * @param string $end         RFC date format
      * @param string $attendee    email
@@ -69,31 +69,50 @@ class EventConfiguration
         ];
     }
 
+  /**
+     * Get event configuration
+     * @return array
+     */
     public function getFullConfiguration()
     {
-        return  array(
-                    'summary' => $this->summary,
-                    'location' => $this->location,
-                    'description' => $this->description,
-                    'start' => $this->start,
-                    'end' => $this->end,
-                    'attendees' => $this->attendees,
-                    'recurrence' => '1',
-                    'reminders' => array(
-                      'useDefault' => false,
-                      'overrides' => array(
-                        array('method' => 'email', 'minutes' => 24 * 60),
-                        array('method' => 'popup', 'minutes' => 30),
-                      ),
-                    )
-                );
+        return array(
+            'summary' => $this->summary,
+            'location' => $this->location,
+            'description' => $this->description,
+            'start' => $this->start,
+            'end' => $this->end,
+            'attendees' => $this->attendees,
+            'recurrence' => '1',
+            'reminders' => array(
+                'useDefault' => false,
+                'overrides' => array(
+                    array(
+                        'method' => 'email',
+                        'minutes' => 1440//24 * 60
+                    ),
+                    array(
+                        'method' => 'popup',
+                        'minutes' => 30
+                    ),
+                ),
+            )
+        );
     }
 
+    /**
+     * Attach attendee to Event
+     * @param  string $email
+     * @return void
+     */
     private function attachAttendee($email)
     {
         array_push($this->attendees, ['email' => $email]);
     }
-    
+
+    /**
+     * Get default attendees
+     * @return array
+     */
     private function getDefaultAttendees()
     {
         return self::EVENT_DEFAULT_ATTENDEES;
