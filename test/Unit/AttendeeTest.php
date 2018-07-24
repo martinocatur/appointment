@@ -68,7 +68,7 @@ class AttendeeTest extends \PHPUnit\Framework\TestCase
             );
 
         $events = $this->attendee->listEvents($calendarId, $optParams);
-        var_dump($eventCreated);
+        
         $this->assertEquals(1, count($events));
 
         $this->assertEquals($events[0]->getSummary(), $summary);
